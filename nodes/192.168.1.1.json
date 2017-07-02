@@ -1,0 +1,90 @@
+{
+  "authorization": {
+    "sudo": {
+      "groups": ["deployer"],
+      "users": ["deployer"],
+      "passwordless": "false"
+    }
+  },
+  "users": ["deployer"],
+  "nodejs":{
+    "version": "0.10.31",
+    "install_method": "package"
+  },
+  "nginx": {
+    "version": "1.7.4",
+    "default_site_enabled": false,
+    "source": {
+      "modules": ["nginx::http_gzip_static_module", "nginx::http_ssl_module"],
+      "checksum": "935c5a5f35d8691d73d3477db2f936b2bbd3ee73668702af3f61b810587fbf68"
+    }
+  },
+  "rvm": {
+    "user_installs": [{
+      "user": "deployer",
+      "default_ruby": "2.2.2@global",
+      "rubies": ["2.2.0", "2.2.2"]
+    }]
+  },
+  "postgresql": {
+    "version": "9.3",
+    "users": [
+      {
+        "username": "deployer",
+        "encrypted_password": "md55da30d90af56fdc2517de57b780a4c20",
+        "superuser": true,
+        "createdb": true,
+        "login": true
+      }
+    ],
+    "databases": [
+      {
+        "name": "database_name",
+        "owner": "deployer",
+        "template": "template0",
+        "encoding": "UTF-8",
+        "locale": "en_US.UTF-8"
+      }
+    ]
+  },
+  "monit": {
+    "port": 2812,
+    "with start delay": 1,
+    "address": "0.0.0.0",
+    "allow": ["localhost"]
+  },
+  "firewall": {
+    "rules": [
+      {
+        "web server http":   { "port": "80",   "protocol": "tcp" },
+        "web server https":  { "port": "443",  "protocol": "tcp" },
+        "redis":             { "port": "6379", "protocol": "tcp" },
+        "monit http":        { "port": "2812", "protocol": "tcp" }
+      }
+    ]
+  },
+  "swap_tuning": {
+    "minimum_size": 1024
+  },
+  "run_list": [
+    "recipe[sudo]",
+    "recipe[chef-solo-search]",
+    "recipe[users::sysadmins]",
+    "recipe[nodejs]",
+    "recipe[nginx::source]",
+    "recipe[monit]",
+    "recipe[rvm::user]",
+    "recipe[imagemagick::devel]",
+    "recipe[postgresql::server]",
+    "recipe[postgresql::server_dev]",
+    "recipe[postgresql::client]",
+    "recipe[nginx]",
+    "recipe[monit]",
+    "recipe[swap_tuning]",
+    "role[redis]",
+    "role[ssh-security]"
+  ],
+  "automatic": {
+    "ipaddress": "192.168.1.1"
+  }
+}
