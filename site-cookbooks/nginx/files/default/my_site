@@ -25,6 +25,17 @@ server {
 
   root /home/deployer/sites/my_site/current/public;
 
+  ssl_certificate /etc/nginx/ssl/my_site/ssl_bundle.crt;
+  ssl_certificate_key /etc/nginx/ssl/my_site/my_site_ssl.key;
+  ssl_dhparam /etc/nginx/ssl/my_site/dhparam.pem;
+
+  ssl_session_timeout 24h;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers kEECDH+AES128:kEECDH:kEDH:-3DES:kRSA+AES128:kEDH+3DES:DES-CBC3-SHA:!RC4:!aNULL:!eNULL:!MD5:!EXPORT:!LOW:!SEED:!CAMELLIA:!IDEA:!PSK:!SRP:!SSLv2;
+  ssl_prefer_server_ciphers on;
+  ssl_session_cache shared:SSL:20m;
+
+  ssl_stapling on;
   resolver 8.8.8.8 8.8.4.4 208.67.222.222 valid=300s;
   resolver_timeout 10s;
 
